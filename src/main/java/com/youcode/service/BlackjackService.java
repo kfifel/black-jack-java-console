@@ -211,6 +211,10 @@ public class BlackjackService {
         return playerScore;
     }
 
+    public int getBetAmount() {
+        return betAmount;
+    }
+
     public int getDealerScore() {
         return dealerScore;
     }

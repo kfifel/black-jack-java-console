@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class BlackjackController {
-    private final BlackjackService blackjackService = new BlackjackService();
+    public final BlackjackService blackjackService = new BlackjackService();
     private final Scanner scanner;
 
     public BlackjackController() {
