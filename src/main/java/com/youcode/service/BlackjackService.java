@@ -33,22 +33,27 @@ public class BlackjackService {
 
     }
 
+    public int countPiochDeck() { return piochDeck.size();}
+
     public void playerHit() {
         checkPiochSize();
         playerHand.add(tirer_une_carte(piochDeck, 0));
     }
 
     public void playerStand() {
-       do{
+        int playerPoint = calculPoint(playerHand);
+        int dealerPoint;
+        do{
            addToDealerHand();
-        } while (calculPoint(dealerHand) < 17 &&  calculPoint(dealerHand) < calculPoint(playerHand));
+            dealerPoint = calculPoint(dealerHand);
+        } while (dealerPoint < 17 &&  dealerPoint < playerPoint);
     }
 
     public int evaluateRoundResult() {
         int playerResult = calculPoint(playerHand);
         int dealerResult = calculPoint(dealerHand);
 
-        if (playerResult > dealerResult && playerResult <= 21) {
+        if ((playerResult > dealerResult || dealerResult > 21 ) && playerResult <= 21 ) {
             updateSold(WIN);
             return 1;
         } else if(playerResult == dealerResult) {
@@ -59,16 +64,15 @@ public class BlackjackService {
                 updateSold(WIN);
             else
                 updateSold(LOST);
-
             return -1;
         }
     }
 
     void updateSold(ResultRound result) {
         if(result.equals(DRAW)) {
-            this.betAmount += this.betAmount;
+            playerBalance  += betAmount;
         } else if (result.equals(WIN)) {
-            this.betAmount += this.betAmount * 2;
+            playerBalance  += betAmount * 2;
         }
     }
 
@@ -89,6 +93,7 @@ public class BlackjackService {
     }
 
     public void setPlayerAndDealersDeckHand(){
+        checkPiochSize();
         playerHand.add (tirer_une_carte(piochDeck, 0));
         playerHand.add (tirer_une_carte(piochDeck, 0));
 
@@ -128,7 +133,8 @@ public class BlackjackService {
     }
 
     public void initializePioch() {
-        Map<List<List<Integer>>, List<List<Integer>>> res = this.piocher_n_cartes(deck, getRandomInteger(10)+20);
+        Map<List<List<Integer>>, List<List<Integer>>> res = this.piocher_n_cartes(
+                deck, getRandomInteger(10)+20);
 
         for (Map.Entry<List<List<Integer>>, List<List<Integer>>> entry : res.entrySet()) {
             this.piochDeck = entry.getKey();

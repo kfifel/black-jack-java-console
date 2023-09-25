@@ -32,7 +32,7 @@ public class BlackjackController {
             int playerPoint = blackjackService.calculPoint(playerHand);
 
             showCards(playerPoint, playerHand);
-
+            System.out.println("\nPioch Deck: "+blackjackService.countPiochDeck());
             if ( playerPoint < 21 ) {
                 System.out.println("\n1: Hit \t\t 2~: Stand");
                 input = scanner.nextInt();
@@ -43,7 +43,7 @@ public class BlackjackController {
                     showCards(playerPoint, playerHand);
                     roundIsFinished = true;
                 }
-            }else
+            } else
                 break;
         }while(!roundIsFinished);
 
@@ -93,18 +93,26 @@ public class BlackjackController {
     }
 
     public void setBetUser() {
-        boolean result;
-        do{
-            int amount;
-            System.out.printf("Votre sold: %d $\n", blackjackService.getPlayerBalance());
-            System.out.print("choisir le montant que vous voulez poser :");
-            amount = scanner.nextInt();
-            result = blackjackService.placeBet(amount);
-            if (!result) {
-                System.out.println("Insufficient balance. Cannot place the bet.");
-            }
-        } while (!result);
-    }
+        int amount;
+        boolean validInput = false;
 
+        do {
+            System.out.printf("Your balance: %d $\n", blackjackService.getPlayerBalance());
+            System.out.print("Enter the amount you want to bet: ");
+
+            try {
+                amount = scanner.nextInt();
+                if (amount <= 0 || amount > blackjackService.getPlayerBalance()) {
+                    PrintMessage.error("Invalid bet amount. Please enter a valid amount.");
+                } else {
+                    validInput = true;
+                    blackjackService.placeBet(amount);
+                }
+            } catch (Exception e) {
+                PrintMessage.error("Invalid input. Please enter a valid positive integer.");
+                scanner.nextLine();
+            }
+        } while (!validInput);
+    }
 
 }
