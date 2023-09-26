@@ -24,50 +24,66 @@ public class BlackjackController {
     }
 
     private void startPlaying() {
-        int input;
-        boolean roundIsFinished = false;
-        setBetUser();
+        boolean playAgain = false;
+
         do {
-            List<List<Integer>> playerHand = blackjackService.getPlayerHand();
-            int playerPoint = blackjackService.calculPoint(playerHand);
+            int input;
+            int nRound = 1;
+            boolean roundIsFinished = false;
+            setBetUser();
+            do {
+                List<List<Integer>> playerHand = blackjackService.getPlayerHand();
+                int playerPoint = blackjackService.calculPoint(playerHand);
 
-            showCards(playerPoint, playerHand);
-            System.out.println("\nPioch Deck: "+blackjackService.countPiochDeck());
-            if ( playerPoint < 21 ) {
-                System.out.println("\n1: Hit \t\t 2~: Stand");
-                input = scanner.nextInt();
-                if(input == 1)
-                    blackjackService.playerHit();
-                else {
-                    blackjackService.playerStand();
+                showCards(playerPoint, playerHand);
+                System.out.println("\nPioch Deck: " + blackjackService.countPiochDeck());
+                if (playerPoint < 21) {
+                    System.out.println("\n1: Hit \t\t 2~: Stand");
+                    input = scanner.nextInt();
+                    if (input == 1)
+                        blackjackService.playerHit();
+                    else {
+                        blackjackService.playerStand();
+                        showCards(playerPoint, playerHand);
+                        roundIsFinished = true;
+                    }
+                } else {
+                    if (nRound == 1) blackjackService.addToDealerHand();
                     showCards(playerPoint, playerHand);
-                    roundIsFinished = true;
+                    break;
                 }
-            } else
-                break;
-        }while(!roundIsFinished);
+                nRound++;
+            } while (!roundIsFinished);
 
-        evaluateRound();
+            evaluateRound();
+            playAgain = canPlayAgain();
 
-        if ( blackjackService.getPlayerBalance() > 0 ) {
-            System.out.println("would you play again Y/N");
-            scanner.nextLine();
-            String playerChose = scanner.nextLine();
+            if (playAgain)
+                blackjackService.nextRound();
 
-            boolean playAgain = playerChose.equalsIgnoreCase("Y");
+        } while (playAgain);
 
-           if (playAgain){
-               blackjackService.nextRound();
-               startPlaying();
-           }
-        }
-
-        System.out.println("your sold is not enought to play other games !!");
-        System.out.println("Thanks for playing ...");
-        System.out.println(Colors.RED + "Good bay!" + Colors.RESET);
-
+        sayBy();
     }
 
+    public void sayBy(){
+        PrintMessage.warning("your sold is not enough to play other games !!");
+        PrintMessage.success("Thanks for playing ...");
+        PrintMessage.success("Good bay___!");
+    }
+
+    public boolean canPlayAgain(){
+        boolean playAgain = false;
+        if (blackjackService.getPlayerBalance() > 0) {
+            System.out.println("would you play again Y/N");
+            scanner.nextLine();
+
+            String playerChose = scanner.nextLine();
+            playAgain = playerChose.equalsIgnoreCase("Y");
+        }
+
+        return playAgain;
+    }
     void showCards(int playerPoint, List<List<Integer>> playerHand ) {
         List<List<Integer>> dealerHand = blackjackService.getDealerHand();
         int dealerPoint = blackjackService.calculPoint(dealerHand);

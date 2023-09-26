@@ -44,9 +44,9 @@ public class BlackjackService {
         int playerPoint = calculPoint(playerHand);
         int dealerPoint;
         do{
-           addToDealerHand();
+            addToDealerHand();
             dealerPoint = calculPoint(dealerHand);
-        } while (dealerPoint < 17 &&  dealerPoint < playerPoint);
+        } while (dealerPoint <= 17 &&  dealerPoint < playerPoint);
     }
 
     public int evaluateRoundResult() {
@@ -94,10 +94,12 @@ public class BlackjackService {
 
     public void setPlayerAndDealersDeckHand(){
         checkPiochSize();
-        playerHand.add (tirer_une_carte(piochDeck, 0));
+
         playerHand.add (tirer_une_carte(piochDeck, 0));
 
         dealerHand.add(tirer_une_carte(piochDeck, 0));
+
+        playerHand.add (tirer_une_carte(piochDeck, 0));
     }
 
     public void nextRound() {
