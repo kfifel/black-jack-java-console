@@ -33,7 +33,7 @@ public class BlackjackService {
 
     }
 
-    /* public int countPiochDeck() { return piochDeck.size();}
+   /* public int countPiochDeck() { return piochDeck.size();}
 
     public void playerHit() {
         checkPiochSize();
@@ -66,7 +66,9 @@ public class BlackjackService {
                 updateSold(LOST);
             return -1;
         }
-    } */
+    }
+
+    */
 
     void updateSold(ResultRound result) {
         if(result.equals(DRAW)) {
@@ -100,39 +102,37 @@ public class BlackjackService {
         return cards;
     }
 
-    public Map<List<Integer>, List<List<Integer>>> extraire_ieme_carte(List<List<Integer>> cards, int index) {
-        return new HashMap<>(Map.of(cards.remove(index), cards));
-    }
+
+
     public int[][][] piocher_n_cartes (int[][] cards, int piochIndex) {
         int[][]  cardsTemp = cards;
         int[][]  piochList = new int[52][2];
-        int[][]  piochRest = new int[52][2];
-        int [][][] result = new int[2][][];
+        int[][]  piochRest = new int[0][];
+
+        int [][][] result = new int[2][52][2];
 
         for (int i = 0; i < piochIndex; i++) {
             int[][][] resultDelete =  ArraysManipulation.deleteElement(cardsTemp, i);
             piochList[i] = resultDelete[0][0];
-            piochRest[i] = resultDelete[0][0];
-
+            piochRest = resultDelete[1];
         }
 
         result[0] = piochList;
-        result[1] = cardsTemp;
+        result[1] = piochRest;
 
         return result;
     }
 
 
-    public int calculPoint(List<List<Integer>> hand) {
+    public int calculPoint(int[][] localList) {
         int totalPoints = 0;
-        List<List<Integer>> localList = new ArrayList<>(hand);
-        localList.sort(Comparator.comparing(list -> list.get(0), Comparator.reverseOrder()));
+        ArraysManipulation.sort2D(localList);
 
-        for (List<Integer> card : hand) {
-            if (card.get(0) >= 10) {
+        for (int[] card : localList) {
+            if (card[0] >= 10) {
                 totalPoints += 10;
-            } else if(card.get(0) > 1) {
-                totalPoints += card.get(0);
+            } else if(card[0] > 1) {
+                totalPoints += card[0];
             } else {
                 if(totalPoints + 11 <= 21 )
                     totalPoints += 11;
@@ -144,8 +144,7 @@ public class BlackjackService {
     }
 
     public void shuffleCards() {
-        int i = 100;
-        //while (i-- > 0)deck.add(tirer_une_carte(deck, getRandomInteger(52)));
+        ArraysManipulation.shuffle2D(deck);
     }
     List<Integer> tirer_une_carte(List<List<Integer>> cards, int index) {
         return cards.remove(index);
